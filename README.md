@@ -11,4 +11,6 @@
 - [ ] Achievements
 - [ ] verbrannte Kalorien
 - [ ] Einstellungen
-- [ ] Startbildschirm
+- [ ] Startbildschirm#
+
+#
