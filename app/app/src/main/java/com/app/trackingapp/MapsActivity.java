@@ -77,10 +77,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
+        LatLng berlin = new LatLng(53, 13);
+
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.addMarker(new MarkerOptions().position(berlin).title("Marker in Berlin"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(berlin));
 
         locationPermissionRequest.launch(new String[] {
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -88,7 +90,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         CancellationTokenSource cts = new CancellationTokenSource();
-//test
         fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cts.getToken())
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
