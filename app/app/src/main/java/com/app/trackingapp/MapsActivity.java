@@ -88,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         CancellationTokenSource cts = new CancellationTokenSource();
-
+//test
         fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cts.getToken())
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
