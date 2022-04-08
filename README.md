@@ -11,6 +11,8 @@
 - [ ] Achievements
 - [ ] verbrannte Kalorien
 - [ ] Einstellungen
-- [ ] Startbildschirm#
+- [ ] Startbildschirm
 
-#
+---
+
+Dokumentation: https://developer.android.com/
