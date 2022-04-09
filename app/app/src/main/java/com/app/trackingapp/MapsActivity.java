@@ -20,15 +20,25 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Locale;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    private boolean permissionDenied = false;
     private FusedLocationProviderClient mFusedLocationClient;
 
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+
+    private HashMap<String, Location> backtrack = new HashMap<>();
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm")
+                                            .withLocale(Locale.GERMANY)
+                                            .withZone(ZoneId.systemDefault());
 
 
     @Override
@@ -47,8 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)
-                .setFastestInterval(5 * 1000);
+                .setInterval(60 * 1000);
 
         locationCallback = new LocationCallback() {
             @Override
@@ -59,6 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
+                        backtrack.put(dtf.format(Instant.now()), location);
                         CameraPosition mylocation =
                                 new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
                                         .zoom(15.5f)
