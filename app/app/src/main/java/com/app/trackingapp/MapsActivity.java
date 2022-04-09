@@ -63,7 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
                                         .zoom(15.5f)
                                         .build();
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mylocation), 1000, null);
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mylocation), 2000, null);
                         System.out.println("Debug: got location");
                     }
                 }
