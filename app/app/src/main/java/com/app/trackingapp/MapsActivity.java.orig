@@ -1,8 +1,22 @@
 package com.app.trackingapp;
 
+<<<<<<< HEAD
 import android.annotation.SuppressLint;
+=======
+import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.fragment.app.FragmentActivity;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.location.Address;
+import android.location.Geocoder;
+>>>>>>> f4bc5082491edd43ccda85c377f789a24092b569
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -20,8 +34,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     private boolean permissionDenied = false;
@@ -42,8 +59,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+<<<<<<< HEAD
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+=======
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+>>>>>>> f4bc5082491edd43ccda85c377f789a24092b569
 
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -86,6 +107,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
 
+<<<<<<< HEAD
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, null);
+=======
+        LatLng sydney = new LatLng(-34, 151);
+        LatLng berlin = new LatLng(53, 13);
+
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions().position(berlin).title("Marker in Berlin City"));
+        //mMap.addMarker(new MarkerOptions().position(eingabe).title("Wunscheingabe"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(eingabe));
+
+        locationPermissionRequest.launch(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        });
+
+        CancellationTokenSource cts = new CancellationTokenSource();
+        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cts.getToken())
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess (Location location){
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                            .title("Standort"));
+                }
+            }
+        });
+>>>>>>> f4bc5082491edd43ccda85c377f789a24092b569
     }
 }
