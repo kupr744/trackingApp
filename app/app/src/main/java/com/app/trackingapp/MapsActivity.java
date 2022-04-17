@@ -3,6 +3,9 @@ package com.app.trackingapp;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -28,13 +31,22 @@ import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    // auto-generated variables
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    private FusedLocationProviderClient mFusedLocationClient;
 
+    // variables for requesting, receiving and working with location updates
+    private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
 
+    // user interface variables
+    private TextView textLeft, textCenter, textRight;
+    private Button btnStart, btnStop;
+    private int cnt = 0;
+
+    // variables for saving coordinates and time
+    private boolean backtracking = false;
     private HashMap<String, Location> backtrack = new HashMap<>();
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm")
                                             .withLocale(Locale.GERMANY)
@@ -53,12 +65,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // required for requesting and receiving location updates
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        // request system to receive location updates every minute
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(60 * 1000);
 
+        // method invoked every minute then save time and coordinates in hashmap
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -68,7 +83,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
+                        // save time and coordinates
                         backtrack.put(dtf.format(Instant.now()), location);
+
+                        // build new camera position and animate the new camera position because we are moving
                         CameraPosition mylocation =
                                 new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
                                         .zoom(15.5f)
@@ -79,6 +97,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         };
+
+        // initialie textviews and buttons
+        textLeft = findViewById(R.id.textViewLeft);
+        textCenter = findViewById(R.id.textViewCenter);
+        textRight = findViewById(R.id.textViewRight);
+        btnStart = findViewById(R.id.buttonLeft);
+        btnStop = findViewById(R.id.buttonRight);
+
+        // set some text
+        textLeft.setText("- km/h");
+        textCenter.setText("Zeit " + dtf.format(Instant.now()));
+        textRight.setText("Schritte " + cnt);
+
+        // listen to button click
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backtracking = true;
+                backtrack = new HashMap<>();
+                cnt++;
+                textRight.setText("Schritte " + cnt);
+            }
+        });
+
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backtracking = false;
+            }
+        });
     }
 
     /**
