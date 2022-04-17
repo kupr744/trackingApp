@@ -51,7 +51,7 @@
         <!-- Recommended for Android 9 (API level 28) and lower. -->
         <!-- Required for Android 10 (API level 29) and higher. -->
         <service
-            android:name="com.app.trackingapp.DeviceLocation"
+            android:name=".MapsActivity"
             android:foregroundServiceType="location" >
             <!-- Any inner elements would go here. -->
         </service>
