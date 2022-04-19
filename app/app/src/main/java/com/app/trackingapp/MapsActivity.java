@@ -28,6 +28,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -43,7 +45,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // user interface variables
     private TextView textLeft, textCenter, textRight;
     private Button btnStart, btnStop;
-    private int cnt = 0;
+    private int seconds = 0;
+    private Timer T;
 
     // variables for saving coordinates and time
     private boolean backtracking = false;
@@ -107,8 +110,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // set some text
         textLeft.setText("- km/h");
-        textCenter.setText("Zeit " + dtf.format(Instant.now()));
-        textRight.setText("Schritte " + cnt);
+        textCenter.setText("Time -");
+        textRight.setText("Steps " + seconds);
 
         // listen to button click
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -116,8 +119,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 backtracking = true;
                 backtrack = new HashMap<>();
-                cnt++;
-                textRight.setText("Schritte " + cnt);
+                initTimer();
+                startTimer();
+                MapsActivity.this.seconds = 0;
             }
         });
 
@@ -125,8 +129,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 backtracking = false;
+                stopTimer();
             }
         });
+
+
     }
 
     /**
@@ -145,5 +152,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, null);
+    }
+
+    public void startTimer() {
+        T.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        int hours = MapsActivity.this.seconds / 3600;
+                        int minutes = (MapsActivity.this.seconds % 3600) / 60;
+                        int seconds = MapsActivity.this.seconds % 60;
+
+                        String tf = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                        textCenter.setText("Time " + tf);
+                        MapsActivity.this.seconds++;
+                    }
+                });
+            }
+        }, 1000, 1000);
+    }
+
+    public void initTimer() {
+        T = new Timer();
+    }
+
+    public void stopTimer() {
+        T.cancel();
     }
 }
