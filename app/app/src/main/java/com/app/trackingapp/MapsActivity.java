@@ -43,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationCallback locationCallback;
 
     // user interface variables
-    private TextView textLeft, textCenter, textRight, textGeschwindigkeit;
+    private TextView textLeft, textCenter, textRight;
     private Button btnStart, btnStop;
     private int seconds = 0;
     private Timer T;
@@ -74,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // request system to receive location updates every minute
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(60 * 1000);
+                .setInterval(10 * 1000);
 
         // method invoked every minute then save time and coordinates in hashmap
         locationCallback = new LocationCallback() {
@@ -85,7 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    if (location != null) {
+                    if (location != null && backtracking) {
                         // save time and coordinates
                         backtrack.put(dtf.format(Instant.now()), location);
 
@@ -96,6 +96,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .build();
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mylocation), 2000, null);
                         System.out.println("Debug: got location");
+
+                        // set speed
+                        textLeft.setText(getGeschwindigkeit(location) + " km/h");
                     }
                 }
             }
@@ -105,14 +108,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         textLeft = findViewById(R.id.textViewLeft);
         textCenter = findViewById(R.id.textViewCenter);
         textRight = findViewById(R.id.textViewRight);
-        textGeschwindigkeit = findViewById(R.id.tv_geschwindigkeit);
         btnStart = findViewById(R.id.buttonLeft);
         btnStop = findViewById(R.id.buttonRight);
 
         // set some text
         textLeft.setText("- km/h");
         textCenter.setText("Time -");
-        textRight.setText("Steps " + seconds);
+        textRight.setText("Steps -");
 
         // listen to button click
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -155,9 +157,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, null);
     }
 
-public double getGeschwindigkeit(Location location){
-        double d = Double.valueOf(location.getSpeed());
-        return d;
+    public double getGeschwindigkeit(Location location){
+        return (double) location.getSpeed();
     }
 
     public void startTimer() {
