@@ -43,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationCallback locationCallback;
 
     // user interface variables
-    private TextView textLeft, textCenter, textRight;
+    private TextView textLeft, textCenter, textRight, textGeschwindigkeit;
     private Button btnStart, btnStop;
     private int seconds = 0;
     private Timer T;
@@ -105,6 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         textLeft = findViewById(R.id.textViewLeft);
         textCenter = findViewById(R.id.textViewCenter);
         textRight = findViewById(R.id.textViewRight);
+        textGeschwindigkeit = findViewById(R.id.tv_geschwindigkeit);
         btnStart = findViewById(R.id.buttonLeft);
         btnStop = findViewById(R.id.buttonRight);
 
@@ -152,6 +153,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, null);
+    }
+
+public double getGeschwindigkeit(Location location){
+        double d = Double.valueOf(location.getSpeed());
+        return d;
     }
 
     public void startTimer() {
