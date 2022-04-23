@@ -1,5 +1,6 @@
 package com.app.trackingapp;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,8 +31,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -41,12 +42,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    ActivityResultLauncher<String[]> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts
+                            .RequestMultiplePermissions(), result -> {
+                        Boolean fineLocationGranted = result.getOrDefault(
+                                Manifest.permission.ACCESS_FINE_LOCATION, false);
+                        if (fineLocationGranted != null && fineLocationGranted) {
+                            // got permission
+
+                        } else {
+                            terminateApp();
+                        }
+                    }
+            );
+
+    private void terminateApp() {
+        System.exit(0);
+    }
+
 
     // user interface variables
     private TextView textLeft, textCenter, textRight;
     private Button btnStart, btnStop;
-    private int seconds = 0;
-    private Timer T;
+    private com.app.trackingapp.Timer T = new com.app.trackingapp.Timer(this, textLeft);
 
     // variables for saving coordinates and time
     private boolean backtracking = false;
@@ -122,9 +140,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 backtracking = true;
                 backtrack = new HashMap<>();
-                initTimer();
-                startTimer();
-                MapsActivity.this.seconds = 0;
+                T.initTimer();
             }
         });
 
@@ -132,7 +148,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 backtracking = false;
-                stopTimer();
+                T.stopTimer();
             }
         });
 
@@ -152,6 +168,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        new DialogClass().show(getSupportFragmentManager(), "hi");
+
         mMap.setMyLocationEnabled(true);
 
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, null);
@@ -161,33 +179,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (double) location.getSpeed();
     }
 
-    public void startTimer() {
-        T.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        int hours = MapsActivity.this.seconds / 3600;
-                        int minutes = (MapsActivity.this.seconds % 3600) / 60;
-                        int seconds = MapsActivity.this.seconds % 60;
-
-                        String tf = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-                        textCenter.setText("Time " + tf);
-                        MapsActivity.this.seconds++;
-                    }
-                });
-            }
-        }, 1000, 1000);
-    }
-
-    public void initTimer() {
-        T = new Timer();
-    }
-
-    public void stopTimer() {
-        T.cancel();
-    }
 }
