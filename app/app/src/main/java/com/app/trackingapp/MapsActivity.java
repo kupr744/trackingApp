@@ -37,6 +37,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // auto-generated variables
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+    private DialogClass dc;
 
     // variables for requesting, receiving and working with location updates
     private FusedLocationProviderClient mFusedLocationClient;
@@ -47,10 +48,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .RequestMultiplePermissions(), result -> {
                         Boolean fineLocationGranted = result.getOrDefault(
                                 Manifest.permission.ACCESS_FINE_LOCATION, false);
+                        Boolean coarseLocationGranted = result.getOrDefault(
+                            Manifest.permission.ACCESS_FINE_LOCATION, false);
                         if (fineLocationGranted != null && fineLocationGranted) {
                             // got permission
 
+                        } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                            // got only approximate location
+                            dc =  new DialogClass("Location Permission", "This message appeared because you only granted" +
+                                    " approximate Location access. But in order to properly use this Application you need to provice " +
+                                    "fine Location access.\n");
+                            dc.show(getSupportFragmentManager(), "Test");
+                            terminateApp();
                         } else {
+
                             terminateApp();
                         }
                     }
@@ -134,7 +145,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         textCenter.setText("Time -");
         textRight.setText("Steps -");
 
-        // listen to button click
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,7 +162,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
     }
 
     /**
@@ -168,7 +177,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        new DialogClass().show(getSupportFragmentManager(), "hi");
 
         mMap.setMyLocationEnabled(true);
 
