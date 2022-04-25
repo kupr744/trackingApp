@@ -60,15 +60,12 @@ public class RegisterActivity extends AppCompatActivity {
                     } else if (TextUtils.isEmpty(weight)) {
                         regWeight.setError("Weight cannot be empty");
                         regWeight.requestFocus();
-                    } else if (TextUtils.isEmpty(password)) {
-                        regPassword.setError("Password cannot be empty");
+                    } else if (password.length() < 5 ) {
+                        regPassword.setError("Password must be >5 characters");
                         regPassword.requestFocus();
-                    } else if (TextUtils.isEmpty(rpassword)) {
-                        regRPassword.setError("Repeat Password cannot be empty");
-                        regRPassword.requestFocus();
                     } else if (!password.equals(rpassword)) {
-                        regPassword.setError("Password is not correct");
-                        regPassword.requestFocus();
+                        regRPassword.setError("Password is not equal");
+                        regRPassword.requestFocus();
                     } else {
                     UserClass userClass = new UserClass(username, email, password, weight);
                     reference.child(username).setValue(userClass);
