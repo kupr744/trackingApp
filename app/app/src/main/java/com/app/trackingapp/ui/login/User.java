@@ -1,6 +1,6 @@
 package com.app.trackingapp.ui.login;
 
-public class Kunde {
+public class User {
 
     private String email;
     private String username;
@@ -10,7 +10,7 @@ public class Kunde {
     private double distance;
     private int rang;
 
-    public Kunde(String email, String username, String password, boolean gender, double weight, double distance, int rang) {
+    public User(String email, String username, String password, boolean gender, double weight, double distance, int rang) {
         this.email = email;
         this.username = username;
         this.password = password;
@@ -75,4 +75,5 @@ public class Kunde {
     public void setRang(int rang) {
         this.rang = rang;
     }
+
 }
