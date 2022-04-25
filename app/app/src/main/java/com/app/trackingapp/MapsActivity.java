@@ -31,6 +31,9 @@ import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    //Database
+    private static final String DATABASE_LINK = "https://test";
+
     // auto-generated variables
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
