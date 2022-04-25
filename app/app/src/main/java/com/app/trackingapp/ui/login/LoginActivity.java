@@ -2,6 +2,7 @@ package com.app.trackingapp.ui.login;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -25,31 +26,71 @@ import android.widget.Toast;
 
 import com.app.trackingapp.MapsActivity;
 import com.app.trackingapp.R;
+import com.app.trackingapp.RegisterActivity;
 import com.app.trackingapp.databinding.ActivityLoginBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button button;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference ref = database.getReference();
+
+    private Button lbutton;
+    private Button rbutton;
+
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+       // final TextView welcomeText = (TextView)findViewById(R.id.welcometext);
+
+        // ref.addValueEventListener(new ValueEventListener() {
+           // @Override
+          //  public void onDataChange(DataSnapshot snapshot) {
+          //      String x = snapshot.getValue(String.class);
+          //      welcomeText.setText(x);
+         //   }
+
+       //     @Override
+      //      public void onCancelled(DatabaseError error) {
+
+      //      }
+     //   });
+
+       // Toast.makeText( LoginActivity.this, "Firebase conected", Toast.LENGTH_LONG).show();
+
+
         //Login Button click listener(1)
-        button = (Button) findViewById(R.id.login);
-        button.setOnClickListener(new View.OnClickListener() {
+        lbutton = (Button) findViewById(R.id.login);
+        lbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(view.getContext(), MapsActivity.class);
                 startActivity(i);
             }
         });
+
+        rbutton = (Button) findViewById(R.id.registrieren);
+        rbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), RegisterActivity.class);
+                startActivity(i);
+            }
+        });
+
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
