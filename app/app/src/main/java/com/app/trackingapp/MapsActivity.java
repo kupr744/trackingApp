@@ -25,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -179,6 +180,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.setMyLocationEnabled(true);
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if(location != null) {
+                            CameraPosition mylocation =
+                                    new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
+                                            .zoom(15.5f)
+                                            .build();
+                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mylocation), 2000, null);
+                        }
+                    }
+        });
 
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, null);
     }
