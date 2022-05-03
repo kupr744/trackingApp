@@ -24,8 +24,13 @@ public class Timer {
                     @Override
                     public void run()
                     {
+                        int hours = seconds / 3600;
+                        int mins = (seconds % 3600) / 60;
+                        int secs = seconds % 60;
 
-                        tv.setText("Time " + toString());
+                        String tf = String.format("%02d:%02d:%02d", hours, mins, secs);
+
+                        tv.setText("Time " + tf);
                         seconds++;
                     }
                 });

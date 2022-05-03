@@ -184,6 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 isRunning = false;
                 T.stopTimer();
                 drawRoute();
+                if(sensor == null) stepCount = 0;
                 sd = new StatusDialog(getCalories(), T.toString(), String.valueOf(stepCount), getDistance(), getParent());
                 sd.show(getSupportFragmentManager(), "endOfRun");
             }

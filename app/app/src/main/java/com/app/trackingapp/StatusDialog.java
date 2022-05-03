@@ -37,8 +37,7 @@ public class StatusDialog extends DialogFragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dismiss();
-                        Toast.makeText(activity, "tap on the route to remove it", Toast.LENGTH_LONG).show();
+                        dismissAllowingStateLoss();
                     }
                 });
 
