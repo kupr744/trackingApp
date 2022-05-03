@@ -24,12 +24,8 @@ public class Timer {
                     @Override
                     public void run()
                     {
-                        int hours = seconds / 3600;
-                        int mins = (seconds % 3600) / 60;
-                        int secs = seconds % 60;
 
-                        String tf = String.format("%02d:%02d:%02d", hours, mins, secs);
-                        tv.setText("Time " + tf);
+                        tv.setText("Time " + toString());
                         seconds++;
                     }
                 });
@@ -45,5 +41,15 @@ public class Timer {
 
     public void stopTimer() {
         this.T.cancel();
+    }
+
+
+    @Override
+    public String toString() {
+        int hours = seconds / 3600;
+        int mins = (seconds % 3600) / 60;
+        int secs = seconds % 60;
+
+        return String.format("%02d:%02d:%02d", hours, mins, secs);
     }
 }

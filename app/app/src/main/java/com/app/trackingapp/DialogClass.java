@@ -28,6 +28,7 @@ public class DialogClass extends DialogFragment {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     agreed = true;
+                    dismiss();
                 }
             })
             .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
