@@ -1,5 +1,6 @@
 package com.app.trackingapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,6 +12,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.app.trackingapp.ui.login.LoginActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,6 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     FirebaseDatabase rootNode;
     DatabaseReference reference;
 
+    FirebaseAuth mAuth;
 
 
     @Override
@@ -35,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
         regRPassword = findViewById(R.id.rpasswordtext);
         regWeight = findViewById(R.id.weighttext);
 
+        mAuth = FirebaseAuth.getInstance();
 
         r2button = (Button) findViewById(R.id.registrieren2);
         r2button.setOnClickListener(new View.OnClickListener() {
@@ -67,15 +74,33 @@ public class RegisterActivity extends AppCompatActivity {
                         regRPassword.setError("Password is not equal");
                         regRPassword.requestFocus();
                     } else {
-                    UserClass userClass = new UserClass(username, email, password, weight);
-                    reference.child(username).setValue(userClass);
 
-                    Intent i = new Intent(view.getContext(), LoginActivity.class);
-                    startActivity(i);
 
-                    Toast.makeText(RegisterActivity.this, "successful registration", Toast.LENGTH_LONG).show();
+
+                    // Authentification
+                    mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+
+                                // Nutzer wird in Realtime Database geschrieben
+                                UserClass userClass = new UserClass(username, email, password, weight);
+                                reference.child(username).setValue(userClass);
+
+                                Intent i = new Intent(view.getContext(), LoginActivity.class);
+                                startActivity(i);
+                                Toast.makeText(RegisterActivity.this, "successful registration", Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                Toast.makeText(RegisterActivity.this, "Regestration Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+
+
                 }
             }
+
         });
     }
 

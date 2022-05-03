@@ -29,6 +29,10 @@ import com.app.trackingapp.MapsActivity;
 import com.app.trackingapp.R;
 import com.app.trackingapp.RegisterActivity;
 import com.app.trackingapp.databinding.ActivityLoginBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
+
+    private FirebaseAuth mAuth;
 
     private EditText regEmail, regPassword;
 
@@ -58,6 +64,8 @@ public class LoginActivity extends AppCompatActivity {
 
         regEmail = findViewById(R.id.email);
         regPassword = findViewById(R.id.password);
+
+        mAuth = FirebaseAuth.getInstance();
 
        // final TextView welcomeText = (TextView)findViewById(R.id.welcometext);
 
@@ -90,8 +98,21 @@ public class LoginActivity extends AppCompatActivity {
                     regEmail.setError("Email cannot be empty");
                     regEmail.requestFocus();
                 }  else {
-                    Intent i = new Intent(view.getContext(), MapsActivity.class);
-                    startActivity(i);
+
+                    // Authentification Prüfung
+                    mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Intent i = new Intent(view.getContext(), MapsActivity.class);
+                                startActivity(i);
+                                Toast.makeText(LoginActivity.this, "User logged in successfully", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(LoginActivity.this, "Login Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
                 }
 
             }
