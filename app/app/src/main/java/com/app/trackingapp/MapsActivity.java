@@ -57,10 +57,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean allowedTracking = true;
     ActivityResultLauncher<String[]> locationPermissionRequest;
 
-    private void terminateApp() {
-        System.exit(0);
-    }
-
     // user interface variables
     private TextView textLeft, textCenter, textRight;
     private Button btnStart, btnStop;
@@ -185,7 +181,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 T.stopTimer();
                 drawRoute();
                 if(sensor == null) stepCount = 0;
-                sd = new StatusDialog(getCalories(), T.toString(), String.valueOf(stepCount), getDistance(), getParent());
+                double distance = getDistance();
+
+                sd = new StatusDialog(getCalories(distance), T.toString(), String.valueOf(stepCount), String.format("%.2f",getDistance()), getParent());
                 sd.show(getSupportFragmentManager(), "endOfRun");
             }
         });
@@ -251,7 +249,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .clickable(true)
                 .add(arr));
 
-
         pl.setColor(0xff2781f5);
         pl.setWidth(25);
 
@@ -265,13 +262,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(this, "click on the route to remove it", Toast.LENGTH_LONG).show();
     }
 
-
-    private String getDistance() {
-        return "";
+    private double getDistance() {
+        double sum = 0;
+        Helper help = new Helper();
+        for(int i=0; i<backtrack.size()-1; i++) {
+            sum += help.CalculationByDistance(backtrack.get(i), backtrack.get(i + 1));
+        }
+        return sum;
     }
 
-    private String getCalories() {
-        return "";
+    private double getCalories(double distance) {
+        double bodyweight = 1;
+        return Math.round(distance * bodyweight * 0.9 * 100.0) / 100.0;
+    }
+
+    private void terminateApp() {
+        System.exit(0);
     }
 
 }

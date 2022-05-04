@@ -14,10 +14,10 @@ public class StatusDialog extends DialogFragment {
     private String mDuration;
     private String mSteps;
     private String mDistance;
-    private String mCal;
+    private double mCal;
     private Activity activity;
 
-    public StatusDialog(String aCalories, String aDuration, String aSteps, String aDistance, Activity aActivity) {
+    public StatusDialog(double aCalories, String aDuration, String aSteps, String aDistance, Activity aActivity) {
         this.mCal = aCalories;
         this.mDuration = aDuration;
         this.mSteps = aSteps;
@@ -30,10 +30,10 @@ public class StatusDialog extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle("Statistics")
-                .setMessage("burned calories: " + mCal + "\n" +
+                .setMessage("burned calories: " + mCal + " kcal\n" +
                         "duration: " + mDuration + "\n" +
                         "steps: " + mSteps + "\n" +
-                        "distance: " + mDistance + "\n")
+                        "distance: " + mDistance + " km\n")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

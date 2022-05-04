@@ -53,8 +53,7 @@ public class Timer {
     public String toString() {
         int hours = seconds / 3600;
         int mins = (seconds % 3600) / 60;
-        int secs = seconds % 60;
 
-        return String.format("%02d:%02d:%02d", hours, mins, secs);
+        return String.format("%02d h and %02d mins", hours, mins);
     }
 }
