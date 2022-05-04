@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private EditText regEmail, regPassword;
+    private TextView forgPassword;
 
     private Button lbutton;
     private Button rbutton;
@@ -83,6 +84,25 @@ public class LoginActivity extends AppCompatActivity {
      //   });
 
        // Toast.makeText( LoginActivity.this, "Firebase conected", Toast.LENGTH_LONG).show();
+
+
+        //forgot password
+        forgPassword = (TextView) findViewById(R.id.forgotPassword);
+        forgPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = regEmail.getText().toString().trim();
+
+                if (TextUtils.isEmpty(email)) {
+                    regEmail.setError("please enter your email");
+                    regEmail.requestFocus();
+                 //  return;
+                } else {
+                    mAuth.sendPasswordResetEmail(email);
+                    Toast.makeText(LoginActivity.this, "you can change your password using the link in your email", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
         //Login Button click listener(1)
