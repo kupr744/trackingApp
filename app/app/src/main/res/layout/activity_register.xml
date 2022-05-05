@@ -133,7 +133,7 @@
     <RadioGroup
         android:layout_width="114dp"
         android:layout_height="97dp"
-        android:checkedButton="@id/radioButton2"
+        android:checkedButton="@id/radioButtonMale"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.658"
@@ -142,13 +142,13 @@
         app:layout_constraintVertical_bias="0.445">
 
         <RadioButton
-            android:id="@+id/radioButton2"
+            android:id="@+id/radioButtonMale"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Male" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/radioButtonFemale"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Female" />

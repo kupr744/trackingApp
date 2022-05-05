@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.app.trackingapp.ui.login.LoginActivity;
@@ -23,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText regUsername, regEmail, regPassword, regRPassword, regWeight;
     private Button r2button;
+    RadioButton male, female;
 
     FirebaseDatabase rootNode;
     DatabaseReference reference;
@@ -40,6 +42,8 @@ public class RegisterActivity extends AppCompatActivity {
         regPassword = findViewById(R.id.passwordtext);
         regRPassword = findViewById(R.id.rpasswordtext);
         regWeight = findViewById(R.id.weighttext);
+        male = findViewById(R.id.radioButtonMale);
+        female = findViewById(R.id.radioButtonFemale);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -56,6 +60,14 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = regPassword.getText().toString();
                 String rpassword = regRPassword.getText().toString();
                 String weight = regWeight.getText().toString();
+              //  String r1 = male.getText().toString();
+                // String r2 = female.getText().toString();
+                String gender;
+                if (male.isChecked()){
+                    gender = "male";
+                } else {
+                    gender = "female";
+                }
 
 
                 if (TextUtils.isEmpty(username)) {
@@ -84,8 +96,8 @@ public class RegisterActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
 
                                 // Nutzer wird in Realtime Database geschrieben
-                                UserClass userClass = new UserClass(username, email, password, weight);
-                                reference.child(username).setValue(userClass);
+                                UserClass user = new UserClass(username, email, password, weight, gender);
+                                reference.child(username).setValue(user);
 
                                 Intent i = new Intent(view.getContext(), LoginActivity.class);
                                 startActivity(i);
