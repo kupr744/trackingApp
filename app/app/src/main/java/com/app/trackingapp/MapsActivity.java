@@ -1,6 +1,5 @@
 package com.app.trackingapp;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -15,8 +14,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
@@ -43,7 +40,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // auto-generated variables
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    private DialogClass dc;
 
     // variables for step counter sensor
     private SensorManager sensorManager;
@@ -55,7 +51,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private boolean allowedTracking = true;
-    ActivityResultLauncher<String[]> locationPermissionRequest;
 
     // user interface variables
     private TextView textLeft, textCenter, textRight;
@@ -76,32 +71,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // do not turn off the screen
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        /// TODO move code so that in mapready
-        // check if app has fine location access
-        locationPermissionRequest = registerForActivityResult(new ActivityResultContracts
-                        .RequestMultiplePermissions(), result -> {
-                    Boolean fineLocationGranted = result.getOrDefault(
-                            Manifest.permission.ACCESS_FINE_LOCATION, false);
-                    Boolean coarseLocationGranted = result.getOrDefault(
-                            Manifest.permission.ACCESS_FINE_LOCATION, false);
-                    if (fineLocationGranted != null && fineLocationGranted) {
-                        // got permission
-                        allowedTracking = true;
-                    } else if (coarseLocationGranted != null && coarseLocationGranted) {
-                        // got only approximate location
-                        allowedTracking = false;
-                        dc =  new DialogClass("Location Permission", "This message appeared because you only granted" +
-                                " approximate Location access. But in order to properly use this Application you need to provice " +
-                                "fine Location access.\n");
-                        dc.show(getSupportFragmentManager(), "Test");
-                        terminateApp();
-                    } else {
-                        allowedTracking = false;
-                        terminateApp();
-                    }
-                }
-        );
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -272,12 +241,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private double getCalories(double distance) {
+        //get bodyweight from database
         double bodyweight = 1;
+
         return Math.round(distance * bodyweight * 0.9 * 100.0) / 100.0;
     }
-
-    private void terminateApp() {
-        System.exit(0);
-    }
-
 }
