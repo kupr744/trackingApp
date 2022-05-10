@@ -1,18 +1,9 @@
 package com.app.trackingapp.ui.login;
 
+import android.Manifest;
 import android.app.Activity;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -25,6 +16,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.app.trackingapp.DialogClass;
 import com.app.trackingapp.MapsActivity;
 import com.app.trackingapp.R;
 import com.app.trackingapp.RegisterActivity;
@@ -33,11 +34,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -52,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button lbutton;
     private Button rbutton;
 
+    private DialogClass dc;
+    ActivityResultLauncher<String[]> locationPermissionRequest;
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
@@ -62,6 +62,33 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        /// TODO move code so that in mapready
+        // check if app has fine location access
+        locationPermissionRequest = registerForActivityResult(new ActivityResultContracts
+                        .RequestMultiplePermissions(), result -> {
+                    Boolean fineLocationGranted = result.getOrDefault(
+                            Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    Boolean coarseLocationGranted = result.getOrDefault(
+                            Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    if (fineLocationGranted != null && fineLocationGranted) {
+                        // we got permission
+                    } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                        // got only approximate location
+                        dc =  new DialogClass("Location Permission", "This message appeared because you only granted" +
+                                " approximate Location access. But in order to properly use this Application you need to provice " +
+                                "fine Location access.\n");
+                        dc.show(getSupportFragmentManager(), "no-permission");
+                        terminateApp();
+                    } else {
+                        dc =  new DialogClass("Location Permission", "This message appeared because you only granted" +
+                                " approximate Location access. But in order to properly use this Application you need to provice " +
+                                "fine Location access.\n");
+                        dc.show(getSupportFragmentManager(), "no-permission");
+                        terminateApp();
+                    }
+                }
+        );
 
         regEmail = findViewById(R.id.email);
         regPassword = findViewById(R.id.password);
@@ -234,5 +261,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    private void terminateApp() {
+        System.exit(0);
     }
 }
