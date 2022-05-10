@@ -4,6 +4,7 @@ public class UserClass {
 
     String username, email, password, weight, gender;
 
+    public UserClass() {}
 
     public UserClass(String username,  String email, String password, String weight, String gender) {
         this.username = username;
@@ -46,7 +47,7 @@ public class UserClass {
         this.weight = weight;
     }
 
-    public String isGender() {
+    public String getGender() {
         return gender;
     }
 

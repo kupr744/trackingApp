@@ -31,6 +31,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +45,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // auto-generated variables
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+
+    // database
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference ref = database.getReference();
+    private String email;
 
     // variables for step counter sensor
     private SensorManager sensorManager;
@@ -76,6 +86,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Bundle bundle = getIntent().getExtras();
+
+        if(bundle != null) {
+            email = bundle.getString("mail");
+        }
 
         // required for requesting and receiving location updates
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -146,14 +162,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isRunning = false;
-                T.stopTimer();
-                drawRoute();
-                if(sensor == null) stepCount = 0;
-                double distance = getDistance();
+                if(isRunning) {
+                    isRunning = false;
+                    T.stopTimer();
+                    drawRoute();
+                    if (sensor == null) stepCount = 0;
+                    double distance = getDistance();
 
-                sd = new StatusDialog(getCalories(distance), T.toString(), String.valueOf(stepCount), String.format("%.2f",getDistance()), getParent());
-                sd.show(getSupportFragmentManager(), "endOfRun");
+                    sd = new StatusDialog(getCalories(distance), T.toString(), String.valueOf(stepCount), String.format("%.2f", getDistance()), getParent());
+                    sd.show(getSupportFragmentManager(), "endOfRun");
+                }
             }
         });
 
@@ -221,12 +239,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         pl.setColor(0xff2781f5);
         pl.setWidth(25);
 
-        mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
-            @Override
-            public void onPolylineClick(@NonNull Polyline polyline) {
-                pl.remove();
-            }
-        });
+        mMap.setOnPolylineClickListener(polyline -> pl.remove());
 
         Toast.makeText(this, "click on the route to remove it", Toast.LENGTH_LONG).show();
     }
@@ -241,9 +254,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private double getCalories(double distance) {
-        //get bodyweight from database
-        double bodyweight = 1;
+        final double[] bodyweight = {0};
 
-        return Math.round(distance * bodyweight * 0.9 * 100.0) / 100.0;
+        // TODO get weight from user with email (email is class variable)
+        // only sout datasnapshot works
+        ref.orderByChild("email").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot.toString());
+
+                bodyweight[0] = 10;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                bodyweight[0] = 0;
+            }
+        });
+
+        if(bodyweight[0] == 0) Toast.makeText(this, "couldn't get bodyweight from database" +
+                "burned calories may be incorrect!", Toast.LENGTH_LONG).show();
+
+        return Math.round(distance * bodyweight[0] * 0.9 * 100.0) / 100.0;
     }
 }
