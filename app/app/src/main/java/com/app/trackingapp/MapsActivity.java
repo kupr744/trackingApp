@@ -277,4 +277,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return Math.round(distance * bodyweight[0] * 0.9 * 100.0) / 100.0;
     }
+
 }
