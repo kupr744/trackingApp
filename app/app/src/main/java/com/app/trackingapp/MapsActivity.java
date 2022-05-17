@@ -258,11 +258,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // TODO get weight from user with email (email is class variable)
         // only sout datasnapshot works
-        ref.orderByChild("email").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot.toString());
-
+                System.out.println("Debug: " + dataSnapshot.toString());
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    System.out.println("Debug: " + child.toString());
+                    for(DataSnapshot childchild : child.getChildren()) {
+                        System.out.println("Debug: " + childchild.toString());
+                        System.out.println("Debug: " + childchild.child("email").getValue());
+                        if(childchild.child("email").getValue().equals(email)) {
+                            bodyweight[0] = (double) childchild.child("weight").getValue();
+                        }
+                    }
+                }
                 bodyweight[0] = 10;
             }
 
