@@ -256,8 +256,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double getCalories(double distance) {
         final double[] bodyweight = {0};
 
-        // TODO get weight from user with email (email is class variable)
-        // only sout datasnapshot works
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
