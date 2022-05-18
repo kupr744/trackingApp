@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MapsActivity"
-        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="0dp" />
 
     <TextView
@@ -57,7 +57,7 @@
         android:id="@+id/buttonLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="92dp"
+        android:layout_marginStart="36dp"
         android:layout_marginBottom="16dp"
         android:text="Start"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -67,9 +67,21 @@
         android:id="@+id/buttonRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="92dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"
         android:layout_marginBottom="16dp"
         android:text="Stop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonRangliste"
+        app:layout_constraintStart_toEndOf="@+id/buttonLeft" />
+
+    <Button
+        android:id="@+id/buttonRangliste"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="16dp"
+        android:text="Rangliste"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -2,6 +2,7 @@ package com.app.trackingapp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -67,6 +68,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button btnStart, btnStop;
     private com.app.trackingapp.Timer T;
     private StatusDialog sd;
+    private Button btn_rangliste;
+    private boolean once = true;
 
     // variables for saving coordinates and time
     private boolean isRunning = false;
@@ -124,7 +127,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .build();
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(mylocation), 2000, null);
                         System.out.println("Debug: got location");
-                    } else if(location != null && !isRunning && backtrack.size() == 0) {
+                    } else if(location != null && !isRunning && backtrack.size() == 0 && once) {
+                        once = false;
                         CameraPosition mylocation =
                                 new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
                                         .zoom(15.5f)
@@ -141,6 +145,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         textRight = findViewById(R.id.textViewRight);
         btnStart = findViewById(R.id.buttonLeft);
         btnStop = findViewById(R.id.buttonRight);
+        btn_rangliste = findViewById(R.id.buttonRangliste);
 
         // set some text
         textLeft.setText("- km/h");
@@ -159,19 +164,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        btnStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isRunning) {
-                    isRunning = false;
-                    T.stopTimer();
-                    drawRoute();
-                    if (sensor == null) stepCount = 0;
-                    double distance = getDistance();
+        btnStop.setOnClickListener(view -> {
+            if(isRunning) {
+                isRunning = false;
+                T.stopTimer();
+                drawRoute();
+                if (sensor == null) stepCount = 0;
+                double distance = getDistance();
 
-                    sd = new StatusDialog(getCalories(distance), T.toString(), String.valueOf(stepCount), String.format("%.2f", getDistance()), getParent());
-                    sd.show(getSupportFragmentManager(), "endOfRun");
-                }
+                sd = new StatusDialog(getCalories(distance), T.toString(), String.valueOf(stepCount), String.format("%.2f", getDistance()), getParent());
+                sd.show(getSupportFragmentManager(), "endOfRun");
+            }
+        });
+
+        btn_rangliste.setOnClickListener(view -> {
+            if(isRunning) {
+                Toast.makeText(this, "end your run before checking your score!", Toast.LENGTH_LONG).show();
+            } else {
+                Intent i = new Intent(view.getContext(), RanglisteActivity.class);
+                startActivity(i);
             }
         });
 
