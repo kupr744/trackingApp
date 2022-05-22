@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.app.trackingapp.databinding.ActivityMapsBinding;
+import com.app.trackingapp.ui.login.LoginActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // database
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref = database.getReference();
+    private FirebaseAuth firebaseAuth;
     private String email;
 
     // variables for step counter sensor
@@ -68,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button btnStart, btnStop;
     private com.app.trackingapp.Timer T;
     private StatusDialog sd;
-    private Button btn_rangliste;
+    private Button btn_rangliste, btn_signout;
     private boolean once = true;
 
     // variables for saving coordinates and time
@@ -146,6 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnStart = findViewById(R.id.buttonLeft);
         btnStop = findViewById(R.id.buttonRight);
         btn_rangliste = findViewById(R.id.buttonRangliste);
+        btn_signout = findViewById(R.id.signOut);
 
         // set some text
         textLeft.setText("- km/h");
@@ -161,10 +165,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 isRunning = true;
                 backtrack = new ArrayList<>();
                 T.initTimer();
+                btnStart.setVisibility(View.INVISIBLE);
+                btnStop.setVisibility(View.VISIBLE);
             }
         });
 
         btnStop.setOnClickListener(view -> {
+            btnStop.setVisibility(View.INVISIBLE);
+            btnStart.setVisibility(View.VISIBLE);
             if(isRunning) {
                 isRunning = false;
                 T.stopTimer();
@@ -185,6 +193,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(i);
             }
         });
+
+        btn_signout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), LoginActivity.class);
+                startActivity(i);
+            }
+        });
+
 
         // initialize step counter sensor
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -284,11 +301,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 bodyweight[0] = 10;
             }
 
+
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 bodyweight[0] = 0;
             }
         });
+
 
         if(bodyweight[0] == 0) Toast.makeText(this, "couldn't get bodyweight from database" +
                 "burned calories may be incorrect!", Toast.LENGTH_LONG).show();
@@ -297,3 +317,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 }
+
