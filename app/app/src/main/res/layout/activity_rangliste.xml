@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Rangliste"
-        android:textSize="20dp"
+        android:text="Scoreboard"
         android:textColor="@color/black"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,7 +62,7 @@
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Weg (m)"
+                android:text="Distance (km)"
                 android:textColor="@color/black"
                 android:textSize="16dp" />
         </TableRow>

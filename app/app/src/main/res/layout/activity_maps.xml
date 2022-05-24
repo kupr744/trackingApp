@@ -87,8 +87,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#3B4350"
-        android:text="Rangliste"
         android:textColor="@color/white"
+
+        android:text="Scoreboard"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
