@@ -71,6 +71,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button btn_rangliste;
     private boolean once = true;
 
+    // user variables
+    private String jogger;
+    private Double bodyweight = null;
+    private Double Km;
+
     // variables for saving coordinates and time
     private boolean isRunning = false;
     private List<LatLng> backtrack = new ArrayList<>();
@@ -95,6 +100,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(bundle != null) {
             email = bundle.getString("mail");
         }
+
+        getUser();
 
         // required for requesting and receiving location updates
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -171,8 +178,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 drawRoute();
                 if (sensor == null) stepCount = 0;
                 double distance = getDistance();
-
-                sd = new StatusDialog(getCalories(distance), T.toString(), String.valueOf(stepCount), String.format("%.2f", getDistance()), getParent());
+                ref.child("users").child(jogger).child("km").setValue((Km + distance));
+                sd = new StatusDialog(getCalories(distance), T.toString(), String.valueOf(stepCount), String.format("%.2f", distance), getParent());
                 sd.show(getSupportFragmentManager(), "endOfRun");
             }
         });
@@ -182,6 +189,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(this, "end your run before checking your score!", Toast.LENGTH_LONG).show();
             } else {
                 Intent i = new Intent(view.getContext(), RanglisteActivity.class);
+                i.putExtra("email", email);
+                i.putExtra("user", jogger);
                 startActivity(i);
             }
         });
@@ -265,35 +274,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private double getCalories(double distance) {
-        final double[] bodyweight = {0};
+        if(bodyweight == null) Toast.makeText(this, "couldn't get bodyweight from database" +
+                "burned calories may be incorrect!", Toast.LENGTH_LONG).show();
 
+        return Math.round(distance * bodyweight * 0.9 * 100.0) / 100.0;
+    }
+
+    private void getUser() {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println("Debug: " + dataSnapshot.toString());
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    System.out.println("Debug: " + child.toString());
-                    for(DataSnapshot childchild : child.getChildren()) {
-                        System.out.println("Debug: " + childchild.toString());
-                        System.out.println("Debug: " + childchild.child("email").getValue());
-                        if(childchild.child("email").getValue().equals(email)) {
-                            bodyweight[0] = (double) childchild.child("weight").getValue();
+                    for(DataSnapshot user : child.getChildren()) {
+                        UserClass usr = (UserClass) user.getValue(UserClass.class);
+                        if(usr.getEmail().equals(email)) {
+                            jogger = usr.getUsername();
+                            bodyweight = usr.getWeight();
+                            Km = usr.getKm();
                         }
                     }
                 }
-                bodyweight[0] = 10;
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                bodyweight[0] = 0;
+                Toast.makeText(MapsActivity.this, "database connection was cancelled!", Toast.LENGTH_LONG).show();
             }
         });
-
-        if(bodyweight[0] == 0) Toast.makeText(this, "couldn't get bodyweight from database" +
-                "burned calories may be incorrect!", Toast.LENGTH_LONG).show();
-
-        return Math.round(distance * bodyweight[0] * 0.9 * 100.0) / 100.0;
     }
 
 }

@@ -2,17 +2,17 @@ package com.app.trackingapp;
 
 public class UserClass {
 
-    String username, email, password, weight, gender;
-
+    String username, email, password, gender;
+    Double km, weight;
     public UserClass() {}
 
-    public UserClass(String username,  String email, String password, String weight, String gender) {
+    public UserClass(String username,  String email, String password, Double weight, String gender, Double km) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.weight = weight;
         this.gender = gender;
-        
+        this.km = km;
     }
 
     public String getUsername() {
@@ -39,11 +39,11 @@ public class UserClass {
         this.password = password;
     }
 
-    public String getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public void setWeight(String weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
 
@@ -54,4 +54,8 @@ public class UserClass {
     public void setGender(String gender) {
         this.gender = gender;
     }
+
+    public void setKm(Double km) { this.km = km; }
+
+    public Double getKm() { return this.km; }
 }

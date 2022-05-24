@@ -1,8 +1,5 @@
 package com.app.trackingapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.trackingapp.ui.login.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -96,7 +96,8 @@ public class RegisterActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
 
                                 // Nutzer wird in Realtime Database geschrieben
-                                UserClass user = new UserClass(username, email, password, weight, gender);
+                                Double km = 0.0;
+                                UserClass user = new UserClass(username, email, password, Double.valueOf(weight), gender, km);
                                 reference.child(username).setValue(user);
 
                                 Intent i = new Intent(view.getContext(), LoginActivity.class);
