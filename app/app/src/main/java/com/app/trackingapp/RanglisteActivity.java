@@ -61,7 +61,13 @@ public class RanglisteActivity extends FragmentActivity {
                     data.add(new Pair<>(usr.getUsername(), usr.getKm()));
                 }
 
-                data.sort(Comparator.comparing(x -> x.second));
+
+                data.sort(new Comparator<Pair<String, Double>>() {
+                    @Override
+                    public int compare(Pair<String, Double> x, Pair<String, Double> y) {
+                        return Double.compare(y.second, x.second);
+                    }
+                });
 
                 for(int i=0; i<data.size(); i++) {
                     System.out.println("Debug: Init: " + data.get(i).first + data.get(i).second);
