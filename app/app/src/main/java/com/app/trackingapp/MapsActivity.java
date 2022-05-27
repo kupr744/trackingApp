@@ -309,12 +309,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             jogger = usr.getUsername();
                             bodyweight = usr.getWeight();
                             Km = usr.getKm();
+                            System.out.println("Debug: " + bodyweight);
                         }
                     }
                 }
             }
-
-
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -323,6 +322,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
+
+
 
 }
 
