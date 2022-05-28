@@ -128,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         backtrack.add(new LatLng(location.getLatitude(), location.getLongitude()));
 
                         // set speed
-                        textLeft.setText(getGeschwindigkeit(location) + " km/h");
+                        textLeft.setText(String.format("%.1f km/h", getGeschwindigkeit(location)));
 
                         // build new camera position and animate the new camera position because we are moving
                         CameraPosition mylocation =
