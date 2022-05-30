@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 // Nutzer wird in Realtime Database geschrieben
                                 Double km = 0.0;
-                                UserClass user = new UserClass(username, email, password, Double.valueOf(weight), gender, km);
+                                UserClass user = new UserClass(username, email, Double.valueOf(weight), gender, km);
                                 reference.child(username).setValue(user);
 
                                 Intent i = new Intent(view.getContext(), LoginActivity.class);
